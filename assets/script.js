@@ -6,7 +6,11 @@ var answerEl = document.querySelector("#answer");
 var quizNext = document.querySelector(".next");
 var quizSave = document.querySelector(".save");
 var quizScore = document.querySelector("#rcontainer");
+var timerElement = document.querySelector("#timer")
 var score = 0;
+var timer;
+var timerCount;
+var end = false;
 
 var shuffled, current, checker;
 
@@ -57,7 +61,9 @@ quizStart.classList.add('hidden');
 quizEl.classList.remove('hidden');
 shuffled = quizQuestions.sort(() =>Math.random()-.5);
 current = 0;
+timerCount= 60;
 next();
+startTimer();
 }
 
 function next(){
@@ -94,6 +100,9 @@ function select(e){
     if(correct){
         score++;
     }
+    else{
+        timerCount = timerCount-15
+    }
     Array.from(answerEl.children).forEach(button =>{
         setStatus(button, button.dataset.correct)
     })
@@ -101,10 +110,10 @@ function select(e){
         quizNext.classList.remove("hidden");
     }
     else{
+        end = true;
         quizEl.classList.add("hidden");
         quizSave.classList.remove("hidden");
         quizSave.innerText = "Save score of: " + score + " out of " + quizQuestions.length +"?" ;
-        localStorage.setItem("Score", score);
     }
     
 }
@@ -129,3 +138,21 @@ function renderScore(){
     document.querySelector('#scores').innerText = highscore.numright;
     document.querySelector('#Initials').innerText = highscore.initials;
 }
+function startTimer() {
+    timerElement.textContent = timerCount;
+    timer = setInterval(function() {
+      timerCount--;
+      timerElement.textContent = timerCount;
+      if(end){
+          clearInterval(timer);
+          console.log("victory");
+      }
+      if (timerCount <= 0) {
+        clearInterval(timer);
+        quizEl.classList.add("hidden");
+        quizNext.classList.add("hidden");
+        quizSave.classList.remove("hidden");
+        quizSave.innerText = "Save score of: " + score + " out of " + quizQuestions.length +"?" ;
+      }
+    }, 1000);
+  }
