@@ -5,6 +5,7 @@ var questEl = document.querySelector("#question");
 var answerEl = document.querySelector("#answer");
 var quizNext = document.querySelector(".next");
 var quizSave = document.querySelector(".save");
+var quizScore = document.querySelector("#rcontainer");
 var score = 0;
 
 var shuffled, current, checker;
@@ -14,9 +15,17 @@ quizNext.addEventListener('click', ()=>{
     current++;
     next();
 }
-
 )
 
+quizSave.addEventListener('click',function(){
+    var initial = prompt("add initials")
+    var grade = {
+        numright: score,
+        initials: initial
+    }
+    localStorage.setItem("grade", JSON.stringify(grade))
+    renderScore();
+})
 var quizQuestions = [
     {question: "Who invented javascript", answers: [
         {text: "George Washington", correct: false},
@@ -41,14 +50,6 @@ var quizQuestions = [
     }
 ]
 
-function buildquiz(currentQuestion){
-var output = [];
-
-}
-
-function showresults(){
-
-}
 
 function start(){
 console.log("started");
@@ -103,6 +104,7 @@ function select(e){
         quizEl.classList.add("hidden");
         quizSave.classList.remove("hidden");
         quizSave.innerText = "Save score of: " + score + " out of " + quizQuestions.length +"?" ;
+        localStorage.setItem("Score", score);
     }
     
 }
@@ -120,4 +122,10 @@ function setStatus(element, correct){
 function clearStatus(element){
     element.classList.remove("correct");
     element.classList.remove("wrong");
+}
+function renderScore(){
+    var highscore = JSON.parse(localStorage.getItem("grade"));
+    quizScore.classList.remove("hidden");
+    document.querySelector('#scores').innerText = highscore.numright;
+    document.querySelector('#Initials').innerText = highscore.initials;
 }
